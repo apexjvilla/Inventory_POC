@@ -1,6 +1,5 @@
-﻿using Inventory.Domain.Entities;
-using Inventory.Domain.Enums;
-using Inventory.Extensions;
+﻿using Inventory.ConsoleMenu;
+using Inventory.Domain.Entities;
 using Inventory.Repository.Abstractions;
 using Inventory.Repository.Implementations;
 using Inventory.Services.Abstractions;
@@ -22,17 +21,16 @@ internal class Program
         // Register services
         services.AddSingleton<IProductService, ProductService>();
         services.AddSingleton<IWarehouseService, WarehouseService>();
-        services.AddSingleton<IInventoryService, InventoryService>();
+        services.AddSingleton<IInventoryService1, InventoryService>();
         services.AddSingleton<IInventoryValidations, InventoryValidations>();
+        services.AddSingleton<MenuManager>();
 
         var serviceProvider = services.BuildServiceProvider();
 
-        // Create services
-                var productService = serviceProvider.GetRequiredService<IProductService>();
+        // Initialize sample data
+        var productService = serviceProvider.GetRequiredService<IProductService>();
         var warehouseService = serviceProvider.GetRequiredService<IWarehouseService>();
-        var movementService = serviceProvider.GetRequiredService<IMovementService>();
 
-        // Example usage
         Product newProduct = new Product
         {
             Name = "Product A",
@@ -55,19 +53,11 @@ internal class Program
         warehouseService.Add(newWarehouse);
 
         Console.WriteLine("Inventory system initialized with sample data.");
-
-        var products = productService.GetAll();
-        Console.WriteLine("Products:");
-        Console.WriteLine(products.ToJson());
-
-        var warehouses = warehouseService.GetAll();
-        Console.WriteLine("Warehouses:");
-        Console.WriteLine(warehouses.ToJson());
-
-        var movements = movementService.GetAll();
-        Console.WriteLine("Movements:");
-        Console.WriteLine(movements.ToJson());
-
+        Console.WriteLine("Press any key to continue...");
         Console.ReadKey();
+
+        // Launch menu
+        var menuManager = serviceProvider.GetRequiredService<MenuManager>();
+        menuManager.Run();
     }
 }
