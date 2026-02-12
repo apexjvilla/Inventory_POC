@@ -17,20 +17,21 @@ internal class Program
         // Register repositories
         services.AddSingleton<IProductRepository, InMemoryProductRepository>();
         services.AddSingleton<IWarehouseRepository, InMemoryWarehouseRepository>();
-        services.AddSingleton<IMovementRepository, InMemoryMovementRepository>();
+        services.AddSingleton<IMovementWriteRepository, InMemoryMovementRepository>();
+        services.AddSingleton<IMovementReadRepository, InMemoryMovementRepository>();
 
         // Register services
         services.AddSingleton<IProductService, ProductService>();
         services.AddSingleton<IWarehouseService, WarehouseService>();
         services.AddSingleton<IInventoryService, InventoryService>();
-        services.AddSingleton<IInventoryValidations, InventoryValidations>();
+        services.AddSingleton<IInventoryValidationsService, InventoryValidationsService>();
 
         var serviceProvider = services.BuildServiceProvider();
 
         // Create services
                 var productService = serviceProvider.GetRequiredService<IProductService>();
         var warehouseService = serviceProvider.GetRequiredService<IWarehouseService>();
-        var movementService = serviceProvider.GetRequiredService<IMovementService>();
+        var inventoryService = serviceProvider.GetRequiredService<IInventoryService>();
 
         // Example usage
         Product newProduct = new Product
@@ -54,6 +55,9 @@ internal class Program
         };
         warehouseService.Add(newWarehouse);
 
+        inventoryService.RegisterEntry(newProduct.Id, newWarehouse.Id, 1500);
+        inventoryService.RegisterEntry(newProduct1.Id, newWarehouse.Id, 1500);
+
         Console.WriteLine("Inventory system initialized with sample data.");
 
         var products = productService.GetAll();
@@ -64,7 +68,7 @@ internal class Program
         Console.WriteLine("Warehouses:");
         Console.WriteLine(warehouses.ToJson());
 
-        var movements = movementService.GetAll();
+        var movements = inventoryService.GetMovementsByProduct(newProduct.Id);
         Console.WriteLine("Movements:");
         Console.WriteLine(movements.ToJson());
 

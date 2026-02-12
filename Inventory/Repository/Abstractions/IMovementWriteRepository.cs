@@ -2,7 +2,8 @@
 
 namespace Inventory.Repository.Abstractions
 {
-    public interface IMovementRepository : IRepositoryBase<Movement>
+    public interface IMovementWriteRepository
     {
+        void Add(Movement movement);
     }
 }
