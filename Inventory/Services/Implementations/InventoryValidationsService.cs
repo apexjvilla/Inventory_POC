@@ -1,16 +1,17 @@
 ﻿using Inventory.Domain.Entities;
 using Inventory.Repository.Abstractions;
+using Inventory.Services.Abstractions;
 using System.ComponentModel.DataAnnotations;
 
-namespace Inventory.Services.Abstractions
+namespace Inventory.Services.Implementations
 {
-    public class InventoryValidations(IProductRepository productRepository,
+    public class InventoryValidationsService(IProductRepository productRepository,
         IWarehouseRepository warehouseRepository,
-        IMovementRepository movementRepository) : IInventoryValidations
+        IMovementReadRepository movementRepository) : IInventoryValidationsService
     {
         private readonly IProductRepository _productRepository = productRepository;
         private readonly IWarehouseRepository _warehouseRepository = warehouseRepository;
-        private readonly IMovementRepository _movementRepository = movementRepository;
+        private readonly IMovementReadRepository _movementRepository = movementRepository;
 
         public void ValidateProductExists(int productId)
         {

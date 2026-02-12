@@ -16,14 +16,14 @@ internal class Program
         // Register repositories
         services.AddSingleton<IProductRepository, InMemoryProductRepository>();
         services.AddSingleton<IWarehouseRepository, InMemoryWarehouseRepository>();
-        services.AddSingleton<IMovementRepository, InMemoryMovementRepository>();
+        services.AddSingleton<IMovementWriteRepository, InMemoryMovementRepository>();
+        services.AddSingleton<IMovementReadRepository, InMemoryMovementRepository>();
 
         // Register services
         services.AddSingleton<IProductService, ProductService>();
         services.AddSingleton<IWarehouseService, WarehouseService>();
         services.AddSingleton<IInventoryService, InventoryService>();
-        services.AddSingleton<IInventoryService1, InventoryService>();
-        services.AddSingleton<IInventoryValidations, InventoryValidations>();
+        services.AddSingleton<IInventoryValidationsService, InventoryValidationsService>();
 
         // Register MenuManager
         services.AddSingleton<MenuManager>();

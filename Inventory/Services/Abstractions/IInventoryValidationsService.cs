@@ -1,6 +1,6 @@
 ﻿namespace Inventory.Services.Abstractions
 {
-    public interface IInventoryValidations
+    public interface IInventoryValidationsService
     {
         void ValidateProductExists(int productId);
         void ValidateWarehouseExists(int warehouseId);

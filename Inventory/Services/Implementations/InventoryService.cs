@@ -2,19 +2,22 @@
 using Inventory.Domain.Enums;
 using Inventory.Helpers;
 using Inventory.Repository.Abstractions;
+using Inventory.Services.Abstractions;
 using System.ComponentModel.DataAnnotations;
 
-namespace Inventory.Services.Abstractions
+namespace Inventory.Services.Implementations
 {
     public class InventoryService(IProductRepository productRepository,
         IWarehouseRepository warehouseRepository,
-        IMovementRepository movementRepository,
-        IInventoryValidations inventoryValidations) : IInventoryService, IInventoryService1
+        IMovementWriteRepository movementWriteRepository,
+        IMovementReadRepository movementReadRepository,
+        IInventoryValidationsService inventoryValidations) : IInventoryService
     {
         private readonly IProductRepository _productRepository = productRepository;
         private readonly IWarehouseRepository _warehouseRepository = warehouseRepository;
-        private readonly IMovementRepository _movementRepository = movementRepository;
-        private readonly IInventoryValidations _inventoryValidations = inventoryValidations;
+        private readonly IMovementWriteRepository _movementWriteRepository = movementWriteRepository;
+        private readonly IMovementReadRepository _movementReadRepository = movementReadRepository;
+        private readonly IInventoryValidationsService _inventoryValidations = inventoryValidations;
 
         public void RegisterEntry(int productId, int warehouseId, int quantity)
         {
@@ -32,7 +35,7 @@ namespace Inventory.Services.Abstractions
                     MovementType = MovementType.Inbound
                 };
 
-                _movementRepository.Add(movement);
+                _movementWriteRepository.Add(movement);
             }
             catch (Exception ex)
             {
@@ -60,7 +63,7 @@ namespace Inventory.Services.Abstractions
                     MovementType = MovementType.Outbound
                 };
 
-                _movementRepository.Add(movement);
+                _movementWriteRepository.Add(movement);
             }
             catch (Exception ex)
             {
@@ -85,7 +88,7 @@ namespace Inventory.Services.Abstractions
                     MovementType = MovementType.PositiveAdjustment
                 };
 
-                _movementRepository.Add(movement);
+                _movementWriteRepository.Add(movement);
             }
             catch (Exception ex)
             {
@@ -110,7 +113,7 @@ namespace Inventory.Services.Abstractions
                     MovementType = MovementType.NegativeAdjustment
                 };
 
-                _movementRepository.Add(movement);
+                _movementWriteRepository.Add(movement);
             }
             catch (Exception ex)
             {
@@ -125,7 +128,7 @@ namespace Inventory.Services.Abstractions
             {
                 _inventoryValidations.ValidateProductExists(productId);
 
-                return _movementRepository.GetAll()
+                return _movementReadRepository.GetAll()
                     .Where(x => x.ProductId == productId)
                     .Sum(x => x.Quantity);
             }
@@ -144,7 +147,7 @@ namespace Inventory.Services.Abstractions
 
                 _inventoryValidations.ValidateWarehouseExists(warehouseId);
 
-                return _movementRepository.GetAll()
+                return _movementReadRepository.GetAll()
                     .Where(x => x.ProductId == productId
                         && x.WarehouseId == warehouseId)
                     .Sum(x => x.Quantity);
@@ -156,15 +159,16 @@ namespace Inventory.Services.Abstractions
             }
         }
 
-        public List<Movement> GetMovementsByProduct(int warehouseId)
+        public IReadOnlyList<Movement> GetMovementsByProduct(int warehouseId)
         {
             try
             {
                 _inventoryValidations.ValidateProductExists(warehouseId);
 
-                return _movementRepository.GetAll()
+                return _movementReadRepository.GetAll()
                     .Where(x => x.ProductId == warehouseId)
-                    .ToList();
+                    .ToList()
+                    .AsReadOnly();
             }
             catch (Exception ex)
             {
@@ -173,15 +177,16 @@ namespace Inventory.Services.Abstractions
             }
         }
 
-        public List<Movement> GetMovementsByWarehouse(int warehouseId)
+        public IReadOnlyList<Movement> GetMovementsByWarehouse(int warehouseId)
         {
             try
             {
                 _inventoryValidations.ValidateWarehouseExists(warehouseId);
 
-                return _movementRepository.GetAll()
+                return _movementReadRepository.GetAll()
                     .Where(x => x.WarehouseId == warehouseId)
-                    .ToList();
+                    .ToList()
+                    .AsReadOnly();
             }
             catch (Exception ex)
             {
@@ -190,7 +195,7 @@ namespace Inventory.Services.Abstractions
             }
         }
 
-        public List<Movement> GetMovementsByProductAndWarehouse(int productId, int warehouseId)
+        public IReadOnlyList<Movement> GetMovementsByProductAndWarehouse(int productId, int warehouseId)
         {
             try
             {
@@ -198,10 +203,11 @@ namespace Inventory.Services.Abstractions
 
                 _inventoryValidations.ValidateWarehouseExists(warehouseId);
 
-                return _movementRepository.GetAll()
+                return _movementReadRepository.GetAll()
                     .Where(x => x.ProductId == productId
                         && x.WarehouseId == warehouseId)
-                    .ToList();
+                    .ToList()
+                    .AsReadOnly();
             }
             catch (Exception ex)
             {
