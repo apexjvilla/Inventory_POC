@@ -4,22 +4,11 @@ using Inventory.Services.Abstractions;
 
 namespace Inventory.ConsoleMenu
 {
-    public class MenuManager
+    public class MenuManager(
+        IProductService productService,
+        IWarehouseService warehouseService,
+        IInventoryService inventoryService)
     {
-        private readonly IProductService _productService;
-        private readonly IWarehouseService _warehouseService;
-        private readonly IInventoryService1 _inventoryService;
-
-        public MenuManager(
-            IProductService productService,
-            IWarehouseService warehouseService,
-            IInventoryService1 inventoryService)
-        {
-            _productService = productService;
-            _warehouseService = warehouseService;
-            _inventoryService = inventoryService;
-        }
-
         public void Run()
         {
             while (true)
@@ -143,7 +132,7 @@ namespace Inventory.ConsoleMenu
                     Description = description ?? string.Empty
                 };
 
-                _productService.Add(product);
+                productService.Add(product);
                 Console.WriteLine("\n✓ Product created successfully!");
             }
             catch (Exception ex)
@@ -172,7 +161,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                var product = _productService.GetById(id);
+                var product = productService.GetById(id);
                 if (product == null)
                 {
                     Console.WriteLine($"\n✗ Product with ID {id} not found.");
@@ -193,7 +182,7 @@ namespace Inventory.ConsoleMenu
                 if (!string.IsNullOrWhiteSpace(description))
                     product.Description = description;
 
-                _productService.Update(product);
+                productService.Update(product);
                 Console.WriteLine("\n✓ Product updated successfully!");
             }
             catch (Exception ex)
@@ -222,7 +211,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                var product = _productService.GetById(id);
+                var product = productService.GetById(id);
                 if (product == null)
                 {
                     Console.WriteLine($"\n✗ Product with ID {id} not found.");
@@ -237,7 +226,7 @@ namespace Inventory.ConsoleMenu
 
                 if (confirmation == "y" || confirmation == "yes")
                 {
-                    _productService.Delete(id);
+                    productService.Delete(id);
                     Console.WriteLine("\n✓ Product deleted successfully!");
                 }
                 else
@@ -262,7 +251,7 @@ namespace Inventory.ConsoleMenu
 
             try
             {
-                var products = _productService.GetAll();
+                var products = productService.GetAll();
                 Console.WriteLine(products.ToJson());
             }
             catch (Exception ex)
@@ -291,7 +280,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                var product = _productService.GetById(id);
+                var product = productService.GetById(id);
                 if (product == null)
                 {
                     Console.WriteLine($"\n✗ Product with ID {id} not found.");
@@ -390,7 +379,7 @@ namespace Inventory.ConsoleMenu
                     Location = location ?? string.Empty
                 };
 
-                _warehouseService.Add(warehouse);
+                warehouseService.Add(warehouse);
                 Console.WriteLine("\n✓ Warehouse created successfully!");
             }
             catch (Exception ex)
@@ -419,7 +408,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                var warehouse = _warehouseService.GetById(id);
+                var warehouse = warehouseService.GetById(id);
                 if (warehouse == null)
                 {
                     Console.WriteLine($"\n✗ Warehouse with ID {id} not found.");
@@ -440,7 +429,7 @@ namespace Inventory.ConsoleMenu
                 if (!string.IsNullOrWhiteSpace(location))
                     warehouse.Location = location;
 
-                _warehouseService.Update(warehouse);
+                warehouseService.Update(warehouse);
                 Console.WriteLine("\n✓ Warehouse updated successfully!");
             }
             catch (Exception ex)
@@ -469,7 +458,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                var warehouse = _warehouseService.GetById(id);
+                var warehouse = warehouseService.GetById(id);
                 if (warehouse == null)
                 {
                     Console.WriteLine($"\n✗ Warehouse with ID {id} not found.");
@@ -484,7 +473,7 @@ namespace Inventory.ConsoleMenu
 
                 if (confirmation == "y" || confirmation == "yes")
                 {
-                    _warehouseService.Delete(id);
+                    warehouseService.Delete(id);
                     Console.WriteLine("\n✓ Warehouse deleted successfully!");
                 }
                 else
@@ -509,7 +498,7 @@ namespace Inventory.ConsoleMenu
 
             try
             {
-                var warehouses = _warehouseService.GetAll();
+                var warehouses = warehouseService.GetAll();
                 Console.WriteLine(warehouses.ToJson());
             }
             catch (Exception ex)
@@ -538,7 +527,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                var warehouse = _warehouseService.GetById(id);
+                var warehouse = warehouseService.GetById(id);
                 if (warehouse == null)
                 {
                     Console.WriteLine($"\n✗ Warehouse with ID {id} not found.");
@@ -660,7 +649,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                _inventoryService.RegisterEntry(productId, warehouseId, quantity);
+                inventoryService.RegisterEntry(productId, warehouseId, quantity);
                 Console.WriteLine("\n✓ Entry registered successfully!");
             }
             catch (Exception ex)
@@ -707,7 +696,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                _inventoryService.RegisterExit(productId, warehouseId, quantity);
+                inventoryService.RegisterExit(productId, warehouseId, quantity);
                 Console.WriteLine("\n✓ Exit registered successfully!");
             }
             catch (Exception ex)
@@ -754,7 +743,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                _inventoryService.RegisterPositiveAdjustment(productId, warehouseId, quantity);
+                inventoryService.RegisterPositiveAdjustment(productId, warehouseId, quantity);
                 Console.WriteLine("\n✓ Positive adjustment registered successfully!");
             }
             catch (Exception ex)
@@ -801,7 +790,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                _inventoryService.RegisterNegativeAdjustment(productId, warehouseId, quantity);
+                inventoryService.RegisterNegativeAdjustment(productId, warehouseId, quantity);
                 Console.WriteLine("\n✓ Negative adjustment registered successfully!");
             }
             catch (Exception ex)
@@ -830,7 +819,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                var stock = _inventoryService.GetStock(productId);
+                var stock = inventoryService.GetStock(productId);
                 Console.WriteLine($"\nTotal stock for product ID {productId}: {stock}");
             }
             catch (Exception ex)
@@ -868,7 +857,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                var stock = _inventoryService.GetStockByWarehouse(productId, warehouseId);
+                var stock = inventoryService.GetStockByWarehouse(productId, warehouseId);
                 Console.WriteLine($"\nStock for product ID {productId} in warehouse ID {warehouseId}: {stock}");
             }
             catch (Exception ex)
@@ -897,7 +886,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                var movements = _inventoryService.GetMovementsByProduct(productId);
+                var movements = inventoryService.GetMovementsByProduct(productId);
                 Console.WriteLine(movements.ToJson());
             }
             catch (Exception ex)
@@ -926,7 +915,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                var movements = _inventoryService.GetMovementsByWarehouse(warehouseId);
+                var movements = inventoryService.GetMovementsByWarehouse(warehouseId);
                 Console.WriteLine(movements.ToJson());
             }
             catch (Exception ex)
@@ -964,7 +953,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                var movements = _inventoryService.GetMovementsByProductAndWarehouse(productId, warehouseId);
+                var movements = inventoryService.GetMovementsByProductAndWarehouse(productId, warehouseId);
                 Console.WriteLine(movements.ToJson());
             }
             catch (Exception ex)
