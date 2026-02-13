@@ -118,19 +118,12 @@ namespace Inventory.ConsoleMenu
                 Console.Write("Enter product description: ");
                 var description = Console.ReadLine();
 
-                if (string.IsNullOrWhiteSpace(name))
-                {
-                    Console.WriteLine("\n✗ Product name cannot be empty.");
-                    Console.WriteLine("\nPress any key to continue...");
-                    Console.ReadKey();
-                    return;
-                }
+                Console.Write("Enter product price: ");
+                var strPrice = Console.ReadLine();
 
-                var product = new Product
-                {
-                    Name = name ?? string.Empty,
-                    Description = description ?? string.Empty
-                };
+                int price = Convert.ToInt32(strPrice);
+
+                var product = new Product(name, description, price);
 
                 productService.Add(product);
                 Console.WriteLine("\n✓ Product created successfully!");
@@ -173,14 +166,17 @@ namespace Inventory.ConsoleMenu
                 Console.WriteLine($"\nCurrent Name: {product.Name}");
                 Console.Write("Enter new name (press Enter to keep current): ");
                 var name = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(name))
-                    product.Name = name;
 
                 Console.WriteLine($"\nCurrent Description: {product.Description}");
                 Console.Write("Enter new description (press Enter to keep current): ");
                 var description = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(description))
-                    product.Description = description;
+
+                Console.WriteLine($"\nCurrent price: {product.Price}");
+                Console.Write("Enter new price(press Enter to keep current): ");
+                var strPrice = Console.ReadLine();
+                int price = Convert.ToInt32(strPrice);
+
+                product.Update(name, description, price);
 
                 productService.Update(product);
                 Console.WriteLine("\n✓ Product updated successfully!");
@@ -373,11 +369,7 @@ namespace Inventory.ConsoleMenu
                     return;
                 }
 
-                var warehouse = new Warehouse
-                {
-                    Name = name ?? string.Empty,
-                    Location = location ?? string.Empty
-                };
+                var warehouse = new Warehouse(name, location);
 
                 warehouseService.Add(warehouse);
                 Console.WriteLine("\n✓ Warehouse created successfully!");
@@ -420,14 +412,12 @@ namespace Inventory.ConsoleMenu
                 Console.WriteLine($"\nCurrent Name: {warehouse.Name}");
                 Console.Write("Enter new name (press Enter to keep current): ");
                 var name = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(name))
-                    warehouse.Name = name;
 
                 Console.WriteLine($"\nCurrent Location: {warehouse.Location}");
                 Console.Write("Enter new location (press Enter to keep current): ");
                 var location = Console.ReadLine();
-                if (!string.IsNullOrWhiteSpace(location))
-                    warehouse.Location = location;
+
+                warehouse.Update(name, location);
 
                 warehouseService.Update(warehouse);
                 Console.WriteLine("\n✓ Warehouse updated successfully!");
