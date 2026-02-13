@@ -27,13 +27,7 @@ namespace Inventory.Services.Implementations
 
                 _inventoryValidations.ValidateWarehouseExists(warehouseId);
 
-                var movement = new Movement
-                {
-                    ProductId = productId,
-                    WarehouseId = warehouseId,
-                    Date = DateTime.Now,
-                    MovementType = MovementType.Inbound
-                };
+                var movement = new Movement(productId, warehouseId, quantity, DateTime.Now, MovementType.Inbound);
 
                 _movementWriteRepository.Add(movement);
             }
@@ -55,13 +49,7 @@ namespace Inventory.Services.Implementations
                 if (!_inventoryValidations.ValidateProductAndWarehouseStock(productId, warehouseId, quantity))
                     throw new ValidationException("Insufficient stock for the product in the warehouse.");
 
-                var movement = new Movement
-                {
-                    ProductId = productId,
-                    WarehouseId = warehouseId,
-                    Date = DateTime.Now,
-                    MovementType = MovementType.Outbound
-                };
+                var movement = new Movement(productId, warehouseId, quantity, DateTime.Now, MovementType.Inbound);
 
                 _movementWriteRepository.Add(movement);
             }
@@ -80,13 +68,7 @@ namespace Inventory.Services.Implementations
 
                 _inventoryValidations.ValidateWarehouseExists(warehouseId);
 
-                var movement = new Movement
-                {
-                    ProductId = productId,
-                    WarehouseId = warehouseId,
-                    Date = DateTime.Now,
-                    MovementType = MovementType.PositiveAdjustment
-                };
+                var movement = new Movement(productId, warehouseId, quantity, DateTime.Now, MovementType.Inbound);
 
                 _movementWriteRepository.Add(movement);
             }
@@ -105,13 +87,7 @@ namespace Inventory.Services.Implementations
 
                 _inventoryValidations.ValidateWarehouseExists(warehouseId);
 
-                var movement = new Movement
-                {
-                    ProductId = productId,
-                    WarehouseId = warehouseId,
-                    Date = DateTime.Now,
-                    MovementType = MovementType.NegativeAdjustment
-                };
+                var movement = new Movement(productId, warehouseId, quantity, DateTime.Now, MovementType.Inbound);
 
                 _movementWriteRepository.Add(movement);
             }
