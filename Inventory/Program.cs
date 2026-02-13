@@ -1,6 +1,5 @@
-﻿using Inventory.Domain.Entities;
-using Inventory.Domain.Enums;
-using Inventory.Extensions;
+﻿using Inventory.ConsoleMenu;
+using Inventory.Domain.Entities;
 using Inventory.Repository.Abstractions;
 using Inventory.Repository.Implementations;
 using Inventory.Services.Abstractions;
@@ -26,14 +25,25 @@ internal class Program
         services.AddSingleton<IInventoryService, InventoryService>();
         services.AddSingleton<IInventoryValidationsService, InventoryValidationsService>();
 
+        // Register MenuManager
+        services.AddSingleton<MenuManager>();
+
         var serviceProvider = services.BuildServiceProvider();
 
-        // Create services
-                var productService = serviceProvider.GetRequiredService<IProductService>();
-        var warehouseService = serviceProvider.GetRequiredService<IWarehouseService>();
-        var inventoryService = serviceProvider.GetRequiredService<IInventoryService>();
+        // Initialize sample data
+        InitializeSampleData(serviceProvider);
 
-        // Example usage
+        // Start the interactive menu
+        var menuManager = serviceProvider.GetRequiredService<MenuManager>();
+        menuManager.Run();
+    }
+
+    private static void InitializeSampleData(ServiceProvider serviceProvider)
+    {
+        var productService = serviceProvider.GetRequiredService<IProductService>();
+        var warehouseService = serviceProvider.GetRequiredService<IWarehouseService>();
+
+        // Create sample products
         Product newProduct = new Product
         {
             Name = "Product A",
@@ -48,30 +58,12 @@ internal class Program
         };
         productService.Add(newProduct1);
 
+        // Create sample warehouse
         Warehouse newWarehouse = new Warehouse
         {
             Name = "Warehouse A",
             Location = "Location A"
         };
         warehouseService.Add(newWarehouse);
-
-        inventoryService.RegisterEntry(newProduct.Id, newWarehouse.Id, 1500);
-        inventoryService.RegisterEntry(newProduct1.Id, newWarehouse.Id, 1500);
-
-        Console.WriteLine("Inventory system initialized with sample data.");
-
-        var products = productService.GetAll();
-        Console.WriteLine("Products:");
-        Console.WriteLine(products.ToJson());
-
-        var warehouses = warehouseService.GetAll();
-        Console.WriteLine("Warehouses:");
-        Console.WriteLine(warehouses.ToJson());
-
-        var movements = inventoryService.GetMovementsByProduct(newProduct.Id);
-        Console.WriteLine("Movements:");
-        Console.WriteLine(movements.ToJson());
-
-        Console.ReadKey();
     }
 }
