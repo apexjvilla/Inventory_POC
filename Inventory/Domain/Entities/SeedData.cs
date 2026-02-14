@@ -8,6 +8,8 @@ namespace Inventory.Domain.Entities
         {
             SeedProducts(productService);
             SeedWarehouses(warehouseService);
+
+            Console.WriteLine("Seed data initialized successfully");
         }
 
         private static void SeedProducts(IProductService productService)

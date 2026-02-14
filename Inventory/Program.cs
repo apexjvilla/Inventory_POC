@@ -30,6 +30,12 @@ internal class Program
 
         var serviceProvider = services.BuildServiceProvider();
 
+        // Seed data
+        var productService = serviceProvider.GetRequiredService<IProductService>();
+        var warehouseService = serviceProvider.GetRequiredService<IWarehouseService>();
+
+        SeedData.Initialize(productService, warehouseService);
+
         // Start the interactive menu
         var menuManager = serviceProvider.GetRequiredService<MenuManager>();
         menuManager.Run();
